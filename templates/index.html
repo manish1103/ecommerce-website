@@ -1,37 +1,103 @@
-{% extends "base.html" %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopEase | Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body { background-color: #f9f9f9; }
+    .navbar { background-color: #0d6efd !important; }
+    .navbar .nav-link, .navbar-brand { color: white !important; font-weight: 500; }
+    .navbar .nav-link.active { border-bottom: 2px solid white; }
+    .card { transition: all 0.3s ease-in-out; min-height: 370px; }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .card-img-top { height: 200px; object-fit: cover; border-radius: 10px 10px 0 0; }
+    footer a { text-decoration: none; }
+    footer i { transition: 0.2s ease; }
+    footer i:hover { color: #0d6efd; }
+  </style>
+</head>
+<body>
 
-<div class="text-center mb-5">
-  <h1 class="fw-bold text-primary">Welcome to ShopEase</h1>
-  <p class="text-muted">Your one-stop shop for all needs</p>
-</div>
-
-<form class="d-flex justify-content-center mb-4" method="get" action="/">
-  <input class="form-control w-50 me-2" type="text" name="search" placeholder="Search for products..." value="{{ search_query }}">
-  <select class="form-select w-auto me-2" name="category">
-    <option value="">All Categories</option>
-    {% for cat in categories %}
-    <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>{{ cat }}</option>
-    {% endfor %}
-  </select>
-  <button class="btn btn-primary">Search</button>
-</form>
-
-<div class="row g-4">
-  {% for product in products %}
-  <div class="col-md-3 col-sm-6">
-    <div class="card shadow-sm h-100">
-      <img src="{{ url_for('static', filename=product['image']) }}" class="card-img-top" alt="{{ product['name'] }}">
-      <div class="card-body text-center">
-        <h6 class="fw-bold">{{ product['name'] }}</h6>
-        <p class="text-muted">{{ product['category'] }}</p>
-        <p class="fw-bold">₹{{ product['price'] }}</p>
-        <a href="/product/{{ product['id'] }}" class="btn btn-outline-primary btn-sm">View</a>
-        <a href="/add_to_cart/{{ product['id'] }}" class="btn btn-primary btn-sm">Add to Cart</a>
-      </div>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="/">ShopEase</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="/category">Categories</a></li>
+        <li class="nav-item"><a class="nav-link" href="/cart">Cart</a></li>
+        <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+        <li class="nav-item"><a class="nav-link btn btn-light text-primary px-3 ms-2" href="/login">Login</a></li>
+      </ul>
     </div>
   </div>
-  {% endfor %}
+</nav>
+
+<!-- Hero Section -->
+<section class="text-center py-5 bg-light">
+  <div class="container">
+    <h1 class="fw-bold text-primary mb-3">Welcome to ShopEase</h1>
+    <p class="text-muted mb-4">Your one-stop shop for all your needs</p>
+
+    <!-- Search and Filter -->
+    <form method="GET" action="/" class="d-flex justify-content-center gap-2 flex-wrap">
+      <input type="text" name="search" value="{{ search_query }}" class="form-control w-50" placeholder="Search for products...">
+      <select name="category" class="form-select w-auto">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+          <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>{{ cat }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-primary">Search</button>
+    </form>
+  </div>
+</section>
+
+<!-- Product Section -->
+<div class="container py-5">
+  <div class="row g-4">
+    {% for product in products %}
+      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+        <div class="card h-100 border-0 shadow-sm">
+          <img src="{{ url_for('static', filename=product['image']) }}" 
+               class="card-img-top" 
+               alt="{{ product['name'] }}"
+               onerror="this.src='/static/images/default.jpg'">
+          <div class="card-body text-center">
+            <h5 class="fw-bold mb-1">{{ product['name'] }}</h5>
+            <p class="text-muted small">{{ product['category'] }}</p>
+            <h6 class="fw-bold text-dark mb-3">₹{{ product['price'] }}</h6>
+            <a href="/product/{{ product['id'] }}" class="btn btn-outline-primary btn-sm me-2">View</a>
+            <a href="/add_to_cart/{{ product['id'] }}" class="btn btn-primary btn-sm">Add to Cart</a>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="text-center py-5">
+        <p class="text-muted">No products found. Try a different category or search term.</p>
+      </div>
+    {% endfor %}
+  </div>
 </div>
 
-{% endblock %}
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-4 mt-5">
+  <h5>Connect with Me</h5>
+  <div class="mb-3">
+    <a href="https://www.behance.net/manishsen16" target="_blank" class="text-white mx-2"><i class="bi bi-behance fs-3"></i></a>
+    <a href="https://github.com/manish1103" target="_blank" class="text-white mx-2"><i class="bi bi-github fs-3"></i></a>
+    <a href="https://www.linkedin.com/in/manish-sen-a0a741192" target="_blank" class="text-white mx-2"><i class="bi bi-linkedin fs-3"></i></a>
+  </div>
+  <p class="mb-0">© 2025 ShopEase | Designed by <strong>Manish Sen</strong></p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
